@@ -3,7 +3,33 @@
 using std::vector;
 // Check if a partially filled matrix has any conflicts.
 bool IsValidSudoku(const vector<vector<int>>& partial_assignment) {
-  // TODO - you fill in here.
+  std::array<std::array<bool, 10>, 9> columns{};
+  std::array<std::array<bool, 10>, 9> rows{};
+  std::array<std::array<bool, 10>, 9> squares{};
+
+  int j = 0;
+  for (auto row : partial_assignment) {
+    int i = 0;
+    for (int& item : row) {
+      if (item < 1) {
+        i++;
+        continue;
+      }
+
+      int sq = i / 3 + (j / 3) * 3;
+      if (columns[i][item] || rows[j][item] || squares[sq][item]) {
+        return false;
+      }
+
+      columns[i][item] = true;
+      rows[j][item] = true;
+      squares[sq][item] = true;
+
+      i++;
+    }
+    j++;
+  }
+
   return true;
 }
 
