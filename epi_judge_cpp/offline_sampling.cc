@@ -2,13 +2,18 @@
 #include <functional>
 #include <iterator>
 #include <vector>
+#include <stdlib.h>
 #include "test_framework/generic_test.h"
 #include "test_framework/random_sequence_checker.h"
 #include "test_framework/timed_executor.h"
 using std::bind;
 using std::vector;
 void RandomSampling(int k, vector<int>* A_ptr) {
-  // TODO - you fill in here.
+  for (int i = 0; i < k; i++) {
+    int select = rand() % (A_ptr->size() - i);
+    auto remainder_head = A_ptr->begin() + i;
+    iter_swap(remainder_head, remainder_head + select);
+  }
   return;
 }
 bool RandomSamplingRunner(TimedExecutor& executor, int k, vector<int> A) {

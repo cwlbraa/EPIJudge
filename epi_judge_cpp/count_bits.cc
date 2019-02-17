@@ -1,8 +1,16 @@
 #include "test_framework/generic_test.h"
 
+const unsigned int ones = -1;
+const unsigned int mask = ones - 1;
+
 short CountBits(unsigned int x) {
-  // TODO - you fill in here.
-  return 0;
+  unsigned int res = 0;
+  while (x != 0)
+  {
+    res += x & 1;
+    x = x >> 1;
+  }
+  return res;
 }
 
 int main(int argc, char* argv[]) {
