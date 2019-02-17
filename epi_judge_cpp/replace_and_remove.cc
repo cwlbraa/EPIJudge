@@ -6,10 +6,52 @@
 using std::string;
 using std::vector;
 
-int ReplaceAndRemove(int size, char s[]) {
-  // TODO - you fill in here.
-  return 0;
+// int ReplaceAndRemove(int size, char s[]) {
+//   std::vector<char> scratch = {};
+
+//   for (int i = 0; i < size; i++) {
+//     if (s[i] == 'b') {
+//       continue;
+//     }
+//     if (s[i] == 'a') {
+//       scratch.push_back('d');
+//       scratch.push_back('d');
+//       continue;
+//     }
+//     scratch.push_back(s[i]);
+//   }
+
+//   for (int i = 0; i < scratch.size(); i++) {
+//     s[i] = scratch[i];
+//   }
+
+//   return scratch.size();
+// }
+
+int fixchar(int target, char letter, char s[]) {
+    if (letter == 'b') {
+      return 0;
+    }
+    if (letter == 'a') {
+      s[target] = 'd';
+      s[target + 1] = 'd';
+      return 2;
+    }
+    s[target] = letter;
+    return 1;
 }
+
+int ReplaceAndRemove(int size, char s[]) {
+  if (size == 0) {
+    return 0;
+  }
+
+  char tail = s[size - 1];
+  int fixedlen = ReplaceAndRemove(size - 1, s);
+  return fixedlen + fixchar(fixedlen, tail, s);
+}
+
+
 vector<string> ReplaceAndRemoveWrapper(TimedExecutor& executor, int size,
                                        const vector<string>& s) {
   std::vector<char> s_copy(s.size(), '\0');

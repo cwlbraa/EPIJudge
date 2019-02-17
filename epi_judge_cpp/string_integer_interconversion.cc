@@ -1,15 +1,60 @@
 #include <string>
+#include <unordered_map>
 #include "test_framework/generic_test.h"
 #include "test_framework/test_failure.h"
 using std::string;
+using std::cout;
+using std::endl;
+
+const std::unordered_map<char, int> ctoi = {
+  {'0', 0},
+  {'1', 1},
+  {'2', 2},
+  {'3', 3},
+  {'4', 4},
+  {'5', 5},
+  {'6', 6},
+  {'7', 7},
+  {'8', 8},
+  {'9', 9},
+};
+
+const std::array<char, 10> itoc = {
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+};
 
 string IntToString(int x) {
-  // TODO - you fill in here.
-  return "";
+  if (x == 0) {
+    return "0";
+  }
+  if (x < 0) {
+    return string{"-"}.append(IntToString(-1 * x));
+  }
+  string result = "";
+  while (x > 0) {
+    int digit = abs(x % 10);
+    result.push_back(itoc[digit]);
+
+    x /= 10;
+  }
+  std::reverse(result.begin(), result.end());
+  return result;
 }
 int StringToInt(const string& s) {
-  // TODO - you fill in here.
-  return 0;
+  if (s.front() == '-') {
+    return -1 * StringToInt(s.substr(1, s.size() - 1));
+  }
+
+  int result = 0;
+  int i = 1;
+  int exponent = s.size() - 1;
+  for (const char& c : s) {
+    result += ctoi.at(c) * pow(10, exponent);
+    i++;
+    exponent--;
+  }
+    // cout << result << endl;
+  return result;
 }
 void Wrapper(int x, const string& s) {
   if (IntToString(x) != s) {
