@@ -3,12 +3,24 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
+#include <unordered_set>
+
 using std::shared_ptr;
+using PNode = shared_ptr<ListNode<int>>;
 
 shared_ptr<ListNode<int>> HasCycle(const shared_ptr<ListNode<int>>& head) {
-  // TODO - you fill in here.
+  PNode slow = head;
+  PNode fast = head->next;
+  while (fast->next && fast->next->next) {
+    if (slow == fast) {
+      return slow->next;
+    }
+    slow = slow->next;
+    fast = fast->next->next;
+  }
   return nullptr;
 }
+
 void HasCycleWrapper(TimedExecutor& executor,
                      const shared_ptr<ListNode<int>>& head, int cycle_idx) {
   int cycle_length = 0;

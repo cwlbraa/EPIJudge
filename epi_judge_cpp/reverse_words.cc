@@ -4,9 +4,20 @@
 using std::string;
 
 void ReverseWords(string* s) {
-  // TODO - you fill in here.
-  return;
+  std::reverse(s->begin(), s->end());
+  auto wordstart = s->begin();
+  for (auto iter = s->begin(); iter != s->end(); iter++) {
+    if (!isalnum(*iter)) {
+      std::reverse(wordstart, iter);
+      wordstart = iter + 1;
+    }
+  }
+
+  if (wordstart < s->end()) {
+      std::reverse(wordstart, s->end());
+  }
 }
+
 string ReverseWordsWrapper(TimedExecutor& executor, string s) {
   string s_copy = s;
 
