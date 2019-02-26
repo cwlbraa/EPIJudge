@@ -3,11 +3,36 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
+#include <unordered_set>
+
 using std::shared_ptr;
 
 shared_ptr<ListNode<int>> OverlappingNoCycleLists(
     shared_ptr<ListNode<int>> l0, shared_ptr<ListNode<int>> l1) {
-  // TODO - you fill in here.
+
+  if (!l0 || !l1) {
+    return nullptr;
+  }
+
+  std::unordered_set<PNode> s = {l0};
+  PNode iter = l0;
+  while (iter->next) {
+    iter = iter->next;
+    s.insert(iter);
+  }
+
+  if (s.find(l1) != s.end()) {
+    return l1;
+  }
+
+  iter = l1;
+  while (iter->next) {
+    iter = iter->next;
+    if (s.find(iter) != s.end()) {
+      return iter;
+    }
+  }
+
   return nullptr;
 }
 void OverlappingNoCycleListsWrapper(TimedExecutor& executor,

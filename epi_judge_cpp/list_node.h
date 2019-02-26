@@ -9,7 +9,6 @@
 using std::make_shared;
 using std::shared_ptr;
 
-
 template <typename T>
 struct ListNode {
   T data;
@@ -149,3 +148,5 @@ struct SerializationTraits<shared_ptr<ListNode<T>>> {
     return EqualList(a, b);
   }
 };
+
+using PNode = shared_ptr<ListNode<int>>;

@@ -2,25 +2,37 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+#include <stack>
+using std::stack;
 using std::length_error;
 
 class Stack {
- public:
+  stack<int> maxes;
+  stack<int> s;
+public:
   bool Empty() const {
-    // TODO - you fill in here.
-    return true;
+    return s.empty();
   }
   int Max() const {
-    // TODO - you fill in here.
-    return 0;
+    if (maxes.empty()) {
+      return std::numeric_limits<int>::min();
+    }
+    return maxes.top();
   }
   int Pop() {
-    // TODO - you fill in here.
-    return 0;
+    auto ret = s.top();
+    if (ret == Max()) {
+      maxes.pop();
+    }
+    s.pop();
+    return ret;
   }
+
   void Push(int x) {
-    // TODO - you fill in here.
-    return;
+    s.push(x);
+    if (x >= Max()) {
+      maxes.push(x);
+    }
   }
 };
 struct StackOp {

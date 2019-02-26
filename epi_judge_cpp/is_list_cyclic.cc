@@ -6,7 +6,6 @@
 #include <unordered_set>
 
 using std::shared_ptr;
-using PNode = shared_ptr<ListNode<int>>;
 
 shared_ptr<ListNode<int>> HasCycle(const shared_ptr<ListNode<int>>& head) {
   PNode slow = head;

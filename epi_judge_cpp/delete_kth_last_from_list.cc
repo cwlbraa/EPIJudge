@@ -6,8 +6,25 @@ using std::shared_ptr;
 // Assumes L has at least k nodes, deletes the k-th last node in L.
 shared_ptr<ListNode<int>> RemoveKthLast(const shared_ptr<ListNode<int>>& L,
                                         int k) {
-  // TODO - you fill in here.
-  return nullptr;
+  PNode end_iter = L;
+  for (int i = 0; i < k; i++) {
+    end_iter = end_iter->next;
+  }
+
+  PNode prev = nullptr;
+  PNode iter = L;
+  while (end_iter != nullptr) {
+    prev = iter;
+    iter = iter->next;
+    end_iter = end_iter->next;
+  }
+
+  if (!prev) {
+    return iter->next;
+  }
+
+  prev->next = iter->next;
+  return L;
 }
 
 int main(int argc, char* argv[]) {

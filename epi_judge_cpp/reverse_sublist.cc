@@ -1,7 +1,6 @@
 #include "list_node.h"
 #include "test_framework/generic_test.h"
 
-using PNode = shared_ptr<ListNode<int>>;
 
 // reverse the WHOLE given list, returning the new head
 PNode RevEach(PNode L) {
