@@ -1,20 +1,50 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+#include <vector>
+
+std::ostream& operator<<(std::ostream& os, const std::vector<int>& dt) {
+  os << "[";
+  for (auto i : dt) os << i << ", ";
+  os << "]";
+  return os;
+}
+
 class Queue {
- public:
-  Queue(size_t capacity) {}
+  int tail = 0;
+  int head = 0;
+  int size = 0;
+  int cap;
+  std::vector<int> data;
+public:
+  Queue(size_t capacity)
+    : data(capacity)
+    , cap(capacity)
+  {}
+
   void Enqueue(int x) {
-    // TODO - you fill in here.
-    return;
+    if (size + 1 == cap) {
+      std::rotate(data.begin(), data.begin() + head, data.end());
+      tail = size;
+      head = 0;
+
+      cap *= 2;
+      data.resize(cap);
+    }
+
+    data[tail] = x;
+    tail = (tail + 1) % cap;
+    size++;
   }
+
   int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
+    int rez = data[head];
+    head = (head + 1) % cap;
+    size--;
+    return rez;
   }
   int Size() const {
-    // TODO - you fill in here.
-    return 0;
+    return size;
   }
 };
 struct QueueOp {
