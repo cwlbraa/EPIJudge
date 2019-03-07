@@ -2,20 +2,96 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+#include <memory>
+#include <unordered_map>
+#include <map>
+#include <queue>
+
+using std::unordered_map;
+using std::map;
+using std::shared_ptr;
+
+struct CItem;
+using PCItem = shared_ptr<CItem>;
+
+struct CItem {
+  int isbn;
+  int price;
+  PCItem prev;
+  PCItem next;
+
+};
+
+std::ostream& operator<<(std::ostream& o, PCItem p) {
+  o << "(" << p->isbn <<", " << p->price << ")";
+  return o;
+}
+
+std::ostream& operator<<(std::ostream& o, unordered_map<int, PCItem> m) {
+  o << "[";
+  for (auto p : m) o << p.first << ", " << p.second << "; ";
+  o << "]";
+  return o;
+}
 
 class LruCache {
+ unordered_map<int, PCItem> cache_{};
+ int cap_;
+ PCItem oldest_;
+ PCItem newest_;
+
  public:
-  LruCache(size_t capacity) {}
+  LruCache(size_t capacity) : cap_(capacity) {}
+
+  void MoveToNewest_(PCItem item) {
+    Remove(item);
+    Insert(item->isbn, item->price);
+  }
+
   int Lookup(int isbn) {
-    // TODO - you fill in here.
-    return 0;
+    if (cache_.find(isbn) == cache_.end()) {
+      return -1;
+    }
+
+    MoveToNewest_(cache_[isbn]);
+    return cache_[isbn]->price;
   }
+
   void Insert(int isbn, int price) {
-    // TODO - you fill in here.
-    return;
+    if (cache_.find(isbn) != cache_.end()) {
+      MoveToNewest_(cache_[isbn]);
+      return;
+    }
+
+    cache_.insert({isbn, std::make_shared<CItem>(CItem{isbn, price, newest_, nullptr})});
+    if (oldest_ == nullptr) oldest_ = cache_[isbn];
+    if (newest_ != nullptr) newest_->next = cache_[isbn];
+    newest_ = cache_[isbn];
+
+    if (cache_.size() > cap_) {
+      Remove(oldest_);
+    }
   }
+
+  void Remove(PCItem discard) {
+    if (discard == nullptr) return;
+
+    auto prev = discard->prev;
+    auto next = discard->next;
+    if (prev) prev->next = next;
+    if (next) next->prev = prev;
+    if (discard == oldest_) oldest_ = discard->next;
+    if (discard == newest_) newest_ = newest_->prev;
+
+    cache_.erase(discard->isbn);
+  }
+
   bool Erase(int isbn) {
-    // TODO - you fill in here.
+    if (cache_.find(isbn) == cache_.end()) {
+      return false;
+    }
+
+    Remove(cache_[isbn]);
     return true;
   }
 };

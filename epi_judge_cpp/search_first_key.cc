@@ -2,9 +2,15 @@
 #include "test_framework/generic_test.h"
 using std::vector;
 
-int SearchFirstOfK(const vector<int>& A, int k) {
-  // TODO - you fill in here.
-  return 0;
+int SearchFirstOfK(const vector<int>& a, int k) {
+  auto iter = std::lower_bound(a.begin(), a.end(), k);
+  if (iter == a.end()) {
+    return -1;
+  }
+  if (*iter != k) {
+    return -1;
+  }
+  return iter - a.begin();
 }
 
 int main(int argc, char* argv[]) {

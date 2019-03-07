@@ -1,10 +1,20 @@
 #include <string>
+#include <unordered_map>
 #include "test_framework/generic_test.h"
 using std::string;
+using std::unordered_map;
 
 bool IsLetterConstructibleFromMagazine(const string& letter_text,
                                        const string& magazine_text) {
-  // TODO - you fill in here.
+  unordered_map<char, int> lc{};
+  unordered_map<char, int> mc{};
+  for (auto c : letter_text) lc[c]++;
+  for (auto c : magazine_text) mc[c]++;
+  for (auto p : lc) {
+    if (mc[p.first] < p.second) return false;
+  }
+
+
   return true;
 }
 

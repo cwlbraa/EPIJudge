@@ -3,12 +3,34 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
+#include <unordered_set>
 
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
-  return nullptr;
+  auto current = node0.get();
+
+  std::unordered_set<BinaryTreeNode<int>*> s{};
+  s.insert(current);
+
+  while (current->parent != nullptr) {
+    current = current->parent;
+    s.insert(current);
+  }
+
+  if (s.find(node1.get()) != s.end()) {
+    return node1.get();
+  }
+
+  current = node1.get();
+  while (current->parent != nullptr) {
+    current = current->parent;
+    if (s.find(current) != s.end()) {
+      return current;
+    }
+  }
+  return current;
 }
+
 int LcaWrapper(TimedExecutor& executor,
                const unique_ptr<BinaryTreeNode<int>>& tree, int key0,
                int key1) {
