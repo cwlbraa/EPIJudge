@@ -35,26 +35,26 @@ bool ValidToAdd(int x, int y, int val, vector<vector<int>>* partial_assignment) 
 }
 
 vector<int> dig = {1,2,3,4,5,6,7,8,9};
-bool SolveSudoku(vector<vector<int>>* partial_assignment,
+bool SolveSudoku(vector<vector<int>>* valid_partial,
                  int i, int j) {
-  int wide = partial_assignment->size();
-  int tall = partial_assignment->at(0).size();
+  int wide = valid_partial->size();
+  int tall = valid_partial->at(0).size();
   if (j == tall) {
     j = 0;
     if (++i == wide) return true;
   }
 
-  if (partial_assignment->at(i)[j] > 0) return SolveSudoku(partial_assignment, i, j+1);
+  if (valid_partial->at(i)[j] > 0) return SolveSudoku(valid_partial, i, j+1);
 
   for (auto d : dig) {
-    if (ValidToAdd(i, j, d, partial_assignment)) {
-      partial_assignment->at(i)[j] = d;
-      if (SolveSudoku(partial_assignment, i, j+1)) return true;
+    if (ValidToAdd(i, j, d, valid_partial)) {
+      valid_partial->at(i)[j] = d;
+      if (SolveSudoku(valid_partial, i, j+1)) return true;
     }
   }
-  // if it's unsolved, the previous call on the stack
+  // if none of the digits worked the previous call on the stack
   // is gonna try a different assignement, so reset this one
-  partial_assignment->at(i)[j] = 0;
+  valid_partial->at(i)[j] = 0;
 
   return false;
 }
