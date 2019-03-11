@@ -8,10 +8,76 @@
 using std::begin;
 using std::end;
 using std::vector;
-bool SolveSudoku(vector<vector<int>>* partial_assignment) {
-  // TODO - you fill in here.
+
+bool ValidToAdd(int x, int y, int val, vector<vector<int>>* partial_assignment) {
+  int tall = partial_assignment->at(0).size();
+  int wide = partial_assignment->size();
+  // column
+  for (int j = 0; j < tall; j++) {
+    if (j == y) continue;
+    if (val == partial_assignment->at(x)[j]) return false;
+  }
+  // row
+  for (int i = 0; i < wide; i++) {
+    if (i == x) continue;
+    if (val == partial_assignment->at(i)[y]) return false;
+  }
+  // box
+  int boxx = x / 3;
+  int boxy = y / 3;
+  for (int i = 3 * boxx; i < 3 * (boxx + 1); i++) {
+    for (int j = 3 * boxy; j < 3 * (boxy + 1); j++) {
+      if (i == x && j == y) continue;
+      if (val == partial_assignment->at(i)[j]) return false;
+    }
+  }
   return true;
 }
+
+vector<int> dig = {1,2,3,4,5,6,7,8,9};
+bool SolveSudoku(vector<vector<int>>* partial_assignment,
+                 int i, int j) {
+  int wide = partial_assignment->size();
+  int tall = partial_assignment->at(0).size();
+  if (j == tall) {
+    j = 0;
+    if (++i == wide) return true;
+  }
+
+  if (partial_assignment->at(i)[j] > 0) return SolveSudoku(partial_assignment, i, j+1);
+
+  for (auto d : dig) {
+    if (ValidToAdd(i, j, d, partial_assignment)) {
+      partial_assignment->at(i)[j] = d;
+      if (SolveSudoku(partial_assignment, i, j+1)) return true;
+    }
+  }
+  // if it's unsolved, the previous call on the stack
+  // is gonna try a different assignement, so reset this one
+  partial_assignment->at(i)[j] = 0;
+
+  return false;
+}
+
+std::ostream& operator<<(std::ostream& o, vector<vector<int>> v) {
+  o << std::endl;
+  for (int j = 0; j < v.at(0).size(); j++) {
+    for (int i = 0; i < v.size(); i++) {
+      o << v[i][j] << " ";
+    }
+    o << std::endl;
+  }
+  o << std::endl;
+
+  return o;
+}
+
+bool SolveSudoku(vector<vector<int>>* partial_assignment) {
+  auto rez = SolveSudoku(partial_assignment, 0, 0);
+  std::cout << *partial_assignment << std::endl;
+  return rez;
+}
+
 vector<int> GatherColumn(const vector<vector<int>>& data, size_t i) {
   vector<int> result;
   for (auto& row : data) {

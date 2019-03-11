@@ -3,7 +3,20 @@
 using std::vector;
 
 void MergeTwoSortedArrays(vector<int>& A, int m, const vector<int>& B, int n) {
-  // TODO - you fill in here.
+  int ai = m - 1;
+  int bi = n - 1;
+  int ti = m + n - 1;
+  while (ai >= 0 || bi >= 0) {
+    int av = std::numeric_limits<int>::min();
+    int bv = std::numeric_limits<int>::min();
+    if (ai >= 0) av = A[ai];
+    if (bi >= 0) bv = B[bi];
+    if (av >= bv) {
+      A[ti--] = A[ai--];
+    } else {
+      A[ti--] = B[bi--];
+    }
+  }
   return;
 }
 vector<int> MergeTwoSortedArraysWrapper(vector<int> A, int m,

@@ -1,11 +1,26 @@
 #include <vector>
 #include "test_framework/generic_test.h"
+#include <algorithm>
 using std::vector;
 
 vector<int> IntersectTwoSortedArrays(const vector<int>& A,
                                      const vector<int>& B) {
-  // TODO - you fill in here.
-  return {};
+  vector<int> result{};
+  int ap = 0; int bp = 0;
+  while(ap < A.size() && bp < B.size()) {
+    if (A[ap] == B[bp]) {
+      auto intersecting = A[ap++]; bp++;
+      if (!result.empty() && result.back() == intersecting) {
+        continue;
+      }
+      result.push_back(intersecting);
+    } else if (A[ap] < B[bp]) {
+      ap++;
+    } else if (A[ap] > B[bp]) {
+      bp++;
+    }
+  }
+  return result;
 }
 
 int main(int argc, char* argv[]) {

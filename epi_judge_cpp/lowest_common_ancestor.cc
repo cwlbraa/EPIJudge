@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <memory>
+#include <queue>
 #include "binary_tree_node.h"
 #include "test_framework/binary_tree_utils.h"
 #include "test_framework/generic_test.h"
@@ -8,7 +10,21 @@ using std::unique_ptr;
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& tree,
                          const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
+  // bfs of nodes in range between values
+  int low = std::min(node0->data, node1->data);
+  int high = std::max(node0->data, node1->data);
+  std::queue<BinaryTreeNode<int>*> current{tree.get()};
+  std::queue<BinaryTreeNode<int>*> next{};
+  while (!current.empty()) {
+    auto current.front(); current.pop();
+    if (current->data <= max && current->data >= min) {
+      return current;
+    }
+    if (current.empty()) {
+      current = next;
+      next = {};
+    }
+  }
   return nullptr;
 }
 int LcaWrapper(TimedExecutor& executor,

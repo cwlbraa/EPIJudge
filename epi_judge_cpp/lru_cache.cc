@@ -17,9 +17,7 @@ using PCItem = shared_ptr<CItem>;
 struct CItem {
   int isbn;
   int price;
-  PCItem prev;
-  PCItem next;
-
+  list<int>::iterator qspot;
 };
 
 std::ostream& operator<<(std::ostream& o, PCItem p) {
@@ -37,14 +35,14 @@ std::ostream& operator<<(std::ostream& o, unordered_map<int, PCItem> m) {
 class LruCache {
  unordered_map<int, PCItem> cache_{};
  int cap_;
- PCItem oldest_;
- PCItem newest_;
+ list<int> queue_;
 
  public:
   LruCache(size_t capacity) : cap_(capacity) {}
 
-  void MoveToNewest_(PCItem item) {
-    Remove(item);
+  void MoveToNewest(PCItem item) {
+    cache_.erase(queue_.back());
+    queue_.pop_back();
     Insert(item->isbn, item->price);
   }
 
@@ -53,45 +51,35 @@ class LruCache {
       return -1;
     }
 
-    MoveToNewest_(cache_[isbn]);
+    MoveToNewest(cache_[isbn]);
     return cache_[isbn]->price;
   }
 
   void Insert(int isbn, int price) {
     if (cache_.find(isbn) != cache_.end()) {
-      MoveToNewest_(cache_[isbn]);
+      MoveToNewest(cache_[isbn]);
       return;
     }
 
-    cache_.insert({isbn, std::make_shared<CItem>(CItem{isbn, price, newest_, nullptr})});
-    if (oldest_ == nullptr) oldest_ = cache_[isbn];
-    if (newest_ != nullptr) newest_->next = cache_[isbn];
-    newest_ = cache_[isbn];
+    auto item = std::make_shared<CItem>(CItem{isbn, price})
+    cache_.insert({isbn, item)});
+    queue_.push_front(item);
+    item->qspot = queue_.begin();
 
     if (cache_.size() > cap_) {
-      Remove(oldest_);
+      cache_.erase(queue_.back());
+      queue_.pop_back();
     }
   }
 
-  void Remove(PCItem discard) {
-    if (discard == nullptr) return;
-
-    auto prev = discard->prev;
-    auto next = discard->next;
-    if (prev) prev->next = next;
-    if (next) next->prev = prev;
-    if (discard == oldest_) oldest_ = discard->next;
-    if (discard == newest_) newest_ = newest_->prev;
-
-    cache_.erase(discard->isbn);
-  }
 
   bool Erase(int isbn) {
-    if (cache_.find(isbn) == cache_.end()) {
+    auto it = cache_.find(isbn);
+    if (it == cache_.end()) {
       return false;
     }
-
-    Remove(cache_[isbn]);
+    queue_.erase(it->second.qspot);
+    cache_.erase(it);
     return true;
   }
 };

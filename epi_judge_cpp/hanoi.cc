@@ -9,10 +9,22 @@ using std::array;
 using std::stack;
 using std::vector;
 const int kNumPegs = 3;
-vector<vector<int>> ComputeTowerHanoi(int num_rings) {
-  // TODO - you fill in here.
-  return {};
+
+vector<vector<int>> Move(int num_rings, int source, int scratch, int target) {
+  if (num_rings == 0) return {};
+  auto rez = Move(num_rings - 1, source, target, scratch);
+
+  rez.push_back({source, target});
+
+  auto recurse = Move(num_rings - 1, scratch, source, target);
+  rez.insert(rez.end(), recurse.begin(), recurse.end());
+  return rez;
 }
+
+vector<vector<int>> ComputeTowerHanoi(int num_rings) {
+  return Move(num_rings, 0, 1, 2);
+}
+
 void ComputeTowerHanoiWrapper(TimedExecutor& executor, int num_rings) {
   array<stack<int>, kNumPegs> pegs;
   for (int i = num_rings; i >= 1; --i) {
