@@ -11,14 +11,66 @@ struct Coordinate {
   bool operator==(const Coordinate& that) const {
     return x == that.x && y == that.y;
   }
-
+  Coordinate(int x, int y) : x(x), y(y) {}
   int x, y;
 };
+
+template<typename T>
+std::ostream& operator<<(std::ostream& o, std::vector<T>& v) {
+  o << "[";
+  for (auto i : v) {
+    o << i << ", ";
+  }
+  o << "]";
+  return o;
+}
+std::ostream& operator<<(std::ostream& o, Coordinate& c) {
+  o << "[" << c.x << ", " << c.y << "]";
+  return o;
+}
+
+bool Search(vector<vector<Color>>& maze,
+    const Coordinate& s, const Coordinate& e,
+    vector<Coordinate>& result) {
+
+  result.push_back(s);
+  maze[s.x][s.y] = kBlack;
+  if (s == e) {
+    return true;
+  }
+
+  vector<Coordinate> nexts = {
+    {s.x+1, s.y},
+    {s.x, s.y+1},
+    {s.x-1, s.y},
+    {s.x, s.y-1},
+  };
+
+  for (auto c :  nexts) {
+    if (c.x < 0
+     || c.y < 0
+     || c.x >= maze.size()
+     || c.y >= maze[0].size()) continue;
+
+    if (maze[c.x][c.y] == kBlack) continue;
+
+    if (Search(maze, c, e, result)) return true;
+  }
+
+  result.pop_back();
+
+  return false;
+}
+
 vector<Coordinate> SearchMaze(vector<vector<Color>> maze, const Coordinate& s,
                               const Coordinate& e) {
-  // TODO - you fill in here.
+  vector<Coordinate> result{};
+  auto success = Search(maze, s, e, result);
+  if (success) return result;
   return {};
 }
+
+
 template <>
 struct SerializationTraits<Color> : SerializationTraits<int> {
   using serialization_type = Color;
