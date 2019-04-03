@@ -8,6 +8,7 @@
 #include <streambuf>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "fmt_print.h"
 #include "generic_test_handler.h"
@@ -16,6 +17,26 @@
 #include "test_config.h"
 #include "test_timer.h"
 #include "test_utils.h"
+
+template<typename T>
+std::ostream& operator<<(std::ostream& o, std::vector<T>& v) {
+  o << "[";
+  for (auto i : v) {
+    o << i << ", ";
+  }
+  o << "]";
+  return o;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& o, std::unordered_set<T>& v) {
+  o << "[";
+  for (auto i : v) {
+    o << i << ", ";
+  }
+  o << "]";
+  return o;
+}
 
 template <typename Function, typename Comparator>
 TestResult RunTests(GenericTestHandler<Function, Comparator>& handler,

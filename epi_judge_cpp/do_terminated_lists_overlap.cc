@@ -7,34 +7,38 @@
 
 using std::shared_ptr;
 
+shared_ptr<ListNode<int>> Advance(shared_ptr<ListNode<int>> l0, int iters) {
+  if (!iters) return l0;
+  if (!l0) return nullptr;
+  return Advance(l0->next, iters - 1);
+}
+
+int Length(shared_ptr<ListNode<int>> l0) {
+  if (!l0) return 0;
+  return 1 + Length(l0->next);
+}
+
 shared_ptr<ListNode<int>> OverlappingNoCycleLists(
     shared_ptr<ListNode<int>> l0, shared_ptr<ListNode<int>> l1) {
 
-  if (!l0 || !l1) {
-    return nullptr;
+  int l0len = Length(l0);
+  int l1len = Length(l1);
+
+  if (l0len > l1len) {
+    l0 = Advance(l0, l0len - l1len);
+  } else {
+    l1 = Advance(l1, l1len - l0len);
+  }
+  if (l0 == nullptr) return nullptr;
+  if (l1 == nullptr) return nullptr;
+  while(l1 != l0) {
+    l0 = Advance(l0, 1);
+    l1 = Advance(l1, 1);
   }
 
-  std::unordered_set<PNode> s = {l0};
-  PNode iter = l0;
-  while (iter->next) {
-    iter = iter->next;
-    s.insert(iter);
-  }
-
-  if (s.find(l1) != s.end()) {
-    return l1;
-  }
-
-  iter = l1;
-  while (iter->next) {
-    iter = iter->next;
-    if (s.find(iter) != s.end()) {
-      return iter;
-    }
-  }
-
-  return nullptr;
+  return l0;
 }
+
 void OverlappingNoCycleListsWrapper(TimedExecutor& executor,
                                     shared_ptr<ListNode<int>> l0,
                                     shared_ptr<ListNode<int>> l1,

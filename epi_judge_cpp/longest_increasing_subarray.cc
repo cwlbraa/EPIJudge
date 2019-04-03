@@ -4,12 +4,27 @@ using std::vector;
 
 struct Subarray {
   int start = 0, end = 0;
+  bool operator<(const Subarray& other) const {
+    return end - start < other.end - other.start;
+  }
 };
 
 Subarray FindLongestIncreasingSubarray(const vector<int>& A) {
-  // TODO - you fill in here.
-  return {};
+  Subarray longest = {0, 0};
+  Subarray current = {0, 0};
+  for (int i = 1; i < A.size(); i++) {
+    if (A[i-1] < A[i]) {
+      current.end = i;
+      continue;
+    }
+
+    longest = std::max(current, longest);
+    current = {i, i};
+  }
+
+  return std::max(current, longest);
 }
+
 int FindLongestIncreasingSubarrayWrapper(const vector<int>& A) {
   Subarray result = FindLongestIncreasingSubarray(A);
   return result.end - result.start + 1;

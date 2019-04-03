@@ -16,7 +16,7 @@ struct GraphVertex {
 
 GraphVertex* CloneGraph(GraphVertex* graph) {
   // TODO - you fill in here.
-  return new GraphVertex{0};
+  return &GraphVertex{0};
 }
 vector<int> CopyLabels(const vector<GraphVertex*>& edges) {
   vector<int> labels;
